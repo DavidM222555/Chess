@@ -1,6 +1,7 @@
 ﻿using Chess.Board;
 using Chess.BoardAux;
 using Chess.PieceAux;
+// ReSharper disable ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
 #pragma warning disable CS8602
 #pragma warning disable CS8604
 
@@ -19,7 +20,7 @@ public class Rook : Piece
 
     public override IEnumerable<Tile> GetPossibleMoves()
     {
-        List<Tile> possibleMoves = new List<Tile>();
+        var possibleMoves = new List<Tile>();
 
         var downwardMoves = this.ParentBoard.GetValidTilesInDirection(Direction.Down, 10, this.Y, this.X);
         
@@ -57,8 +58,9 @@ public class Rook : Piece
         this.PossibleMoves = GetPossibleMoves();
     }
 
-    public override void Move(Tile tileToMoveTo)
+    public override string Move(Tile tileToMoveTo)
     {
+        var returnString = "";
         this.UpdatePossibleMoves();
         
         if(this.PossibleMoves.Contains(tileToMoveTo))
@@ -72,7 +74,7 @@ public class Rook : Piece
                 this.ParentBoard.RemovePieceFromGame(tileToMoveTo);
 
                 tileToMoveTo.AddPieceToTile(this);
-                
+                returnString += this.ToString() + "x" + _resources.ColNames[tileToMoveTo.X] + _resources.RowNames[tileToMoveTo.Y];
             }
             else // Else we are just moving to an empty position
             {
@@ -82,10 +84,14 @@ public class Rook : Piece
                 startTile.RemovePiece();
                 
                 tileToMoveTo.AddPieceToTile(this);
+                
+                returnString += this.ToString() + _resources.ColNames[tileToMoveTo.X] + _resources.RowNames[tileToMoveTo.Y];
             }
 
             this.Y = tileToMoveTo.Y;
             this.X = tileToMoveTo.X;
         }
+
+        return returnString;
     }
 }

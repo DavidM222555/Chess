@@ -122,8 +122,9 @@ public class Pawn : Piece
         this.PossibleMoves = GetPossibleMoves();
     }
 
-    public override void Move(Tile tileToMoveTo)
+    public override string Move(Tile tileToMoveTo)
     {
+        var returnString = "";
         this.UpdatePossibleMoves();
         
         if(this.PossibleMoves.Contains(tileToMoveTo))
@@ -139,6 +140,8 @@ public class Pawn : Piece
 
                 tileToMoveTo.AddPieceToTile(this);
                 
+                returnString += this.ToString() + "x" + _resources.ColNames[tileToMoveTo.X] + _resources.RowNames[tileToMoveTo.Y];
+
             }
             else // Else we are just moving to an empty position
             {
@@ -148,12 +151,17 @@ public class Pawn : Piece
                 startTile.RemovePiece();
                 
                 tileToMoveTo.AddPieceToTile(this);
+                
+                returnString += this.ToString() + _resources.ColNames[tileToMoveTo.X] + _resources.RowNames[tileToMoveTo.Y];
+
             }
 
             this.Y = tileToMoveTo.Y;
             this.X = tileToMoveTo.X;
             this.MovedYet = true;
         }
+
+        return returnString;
     }
     
 }

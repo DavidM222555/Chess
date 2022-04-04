@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using Chess.Board;
+using Chess.BoardAux;
 
 namespace Chess.PieceAux; 
 
 
 public abstract class Piece
 {
+    public Resources _resources; // Used for various things to help us get the algebraic names of moves
+    
     protected internal Color PieceColor { get; set; }
 
     protected IEnumerable<Tile> PossibleMoves;
@@ -13,7 +16,7 @@ public abstract class Piece
     protected int X;
     protected int Y;
 
-    protected Board.Board ParentBoard;
+    protected readonly Board.Board ParentBoard;
 
     public override string? ToString()
     {
@@ -22,6 +25,7 @@ public abstract class Piece
     
     protected Piece(Color color, int y, int x, Board.Board parentBoard)
     {
+        _resources = new Resources();
         Y = y;
         X = x;
         
@@ -40,6 +44,6 @@ public abstract class Piece
     public abstract IEnumerable<Tile> GetPossibleMoves();
 
     public abstract void UpdatePossibleMoves();
-    public abstract void Move(Tile tileToMoveTo);
+    public abstract string Move(Tile tileToMoveTo);
     
 }

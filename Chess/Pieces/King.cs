@@ -85,9 +85,10 @@ public class King : Piece
         this.PossibleMoves = this.GetPossibleMoves();
     }
 
-    public override void Move(Tile tileToMoveTo)
+    public override string Move(Tile tileToMoveTo)
     {
         this.UpdatePossibleMoves();
+        string returnString = "";
         
         if(this.PossibleMoves.Contains(tileToMoveTo))
         {
@@ -100,20 +101,27 @@ public class King : Piece
                 this.ParentBoard.RemovePieceFromGame(tileToMoveTo);
 
                 tileToMoveTo.AddPieceToTile(this);
+                
+                returnString += this.ToString() + "x" + _resources.ColNames[tileToMoveTo.X] + _resources.RowNames[tileToMoveTo.Y];
+
             }
             else // Else we are just moving to an empty position
             {
-
                 // We need to remove this piece from where it is moving
                 var startTile = this.ParentBoard.GetTile(this.Y, this.X);
                 startTile.RemovePiece();
                 
                 tileToMoveTo.AddPieceToTile(this);
+                
+                returnString += this.ToString() + _resources.ColNames[tileToMoveTo.X] + _resources.RowNames[tileToMoveTo.Y];
+
             }
 
             this.Y = tileToMoveTo.Y;
             this.X = tileToMoveTo.X;
         }
+
+        return returnString;
     }
     
 }

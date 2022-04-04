@@ -18,7 +18,7 @@ public class Knight : Piece
 
     public override IEnumerable<Tile> GetPossibleMoves()
     {
-        List<Tile> possibleMoves = new List<Tile>();
+        var possibleMoves = new List<Tile>();
         
         // There are up to 8 valid moves for the knight and we will need
         // to bound check each of them 
@@ -113,9 +113,10 @@ public class Knight : Piece
         this.PossibleMoves = GetPossibleMoves();
     }
 
-    public override void Move(Tile tileToMoveTo)
+    public override string Move(Tile tileToMoveTo)
     {
         this.UpdatePossibleMoves();
+        var returnString = "";
         
         if(this.PossibleMoves.Contains(tileToMoveTo))
         {
@@ -128,6 +129,9 @@ public class Knight : Piece
                 this.ParentBoard.RemovePieceFromGame(tileToMoveTo);
 
                 tileToMoveTo.AddPieceToTile(this);
+                
+                returnString += this.ToString() + "x" +  _resources.ColNames[tileToMoveTo.X] + _resources.RowNames[tileToMoveTo.Y];
+
             }
             else // Else we are just moving to an empty position
             {
@@ -137,11 +141,16 @@ public class Knight : Piece
                 startTile?.RemovePiece();
                 
                 tileToMoveTo.AddPieceToTile(this);
+                
+                returnString += this.ToString() + _resources.ColNames[tileToMoveTo.X] + _resources.RowNames[tileToMoveTo.Y];
+
             }
 
             this.Y = tileToMoveTo.Y;
             this.X = tileToMoveTo.X;
         }
+
+        return returnString;
     }
     
 }

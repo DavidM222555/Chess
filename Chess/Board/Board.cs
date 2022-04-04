@@ -370,7 +370,7 @@ public class Board
     
     public Tile? GetTile(int y, int x)
     {
-        if(y < 8 && y >= 0 && x < 8 && x >= 0)
+        if(y is < 8 and >= 0 && x is < 8 and >= 0)
         {
             return _tiles[y, x];
         }
@@ -381,7 +381,7 @@ public class Board
     
     public void RemovePieceFromGame(Tile tile)
     {
-        Piece? pieceOnTile = this.GetPieceOnBoard(tile.Y, tile.X);
+        var pieceOnTile = this.GetPieceOnBoard(tile.Y, tile.X);
         
         this.RemovePieceFromBoard(pieceOnTile);
         
@@ -389,29 +389,54 @@ public class Board
     }
 
     // Removes a piece from the board list
-    public void RemovePieceFromBoard(Piece piece)
+    private void RemovePieceFromBoard(Piece piece)
     {
         if(this.piecesOnBoard.Contains(piece))
         {
             this.piecesOnBoard.Remove(piece);
-
         }
-        
     }
 
     // Iterates across all pieces and gets all valid moves in the current game state
-    public List<Tuple<Piece, IEnumerable<Tile>>> GetAllValidMoves()
+    public IEnumerable<Tuple<Piece, IEnumerable<Tile>>> GetAllValidMoves()
     {
         var allValidMoves = new List<Tuple<Piece, IEnumerable<Tile>>>();
 
+        // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
         foreach (var piece in this.piecesOnBoard)
         {
             var movesForPiece =  piece.GetPossibleMoves();
+
+            var pieceCount = movesForPiece.ToList().Count;
             
-            allValidMoves.Add(Tuple.Create(piece, movesForPiece));
+            if (pieceCount != 0)
+            {
+                allValidMoves.Add(Tuple.Create(piece, movesForPiece));
+
+            }
         }
         
         return allValidMoves;
+    }
+    
+    public string MakeRandomMove()
+    {
+        var rand = new Random();
+        
+        var allValidMoves = this.GetAllValidMoves();
+        var validMovesList = allValidMoves.ToList();
+
+        var randomMoveListIndex = rand.Next(validMovesList.Count);
+
+        var (randomPiece, randomMoveList) = validMovesList[randomMoveListIndex];
+
+        var moveList = randomMoveList.ToList();
+        var randomMoveIndex = rand.Next(moveList.Count);
+        var randomMove = moveList[randomMoveIndex];
+
+        var moveString = randomPiece.Move(randomMove);
+
+        return moveString;
     }
 
     // Helper function used to test whether or not the pieces on two tiles are of the same color (and thus can't attack each other)
@@ -426,7 +451,9 @@ public class Board
     }
 
     // Used for checking whether if a piece moving would put the king into check (and thus make it an invalid move)
-    public bool PieceHitBy(Piece piece)
+    // @param pieceToTest: The piece we want to determine if is getting hit by anything, will primarily be used
+    // for checking the correctness of moves that would put the king into check
+    public bool PieceHitBy(Piece pieceToTest)
     {
         return false;
     }
